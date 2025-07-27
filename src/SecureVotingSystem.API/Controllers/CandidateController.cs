@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SecureVotingSystem.Application.Interfaces;
-using SecureVotingSystem.Infrastructure.Data;
+using SecureVotingSystem.Core.Models;
 
 namespace SecureVotingSystem.API.Controllers;
 
@@ -19,7 +19,15 @@ public class CandidateController : Controller
     [HttpGet("get-all-candidates")]
     public async Task<IActionResult> GetAllCandidates()
     {
+        _logger.LogInformation("Getting all candidates ...");
         var result = await _candidateRepository.GetAll();
+        return Ok(result);
+    }
+
+    public async Task<IActionResult> CreateCandidate(Candidate candidate)
+    {
+        _logger.LogInformation("Creating candidate ...");
+        var result = await _candidateRepository.Create(candidate);
         return Ok(result);
     }
     
