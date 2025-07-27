@@ -2,23 +2,20 @@
 using SecureVotingSystem.Application.DTOs;
 using SecureVotingSystem.Application.Interfaces;
 using SecureVotingSystem.Core.Models;
-using SecureVotingSystem.Infrastructure.Data;
 
 
 namespace SecureVotingSystem.API.Controllers;
 
-[Route("api/voting")]
+[Route("api/voter")]
 [ApiController]
 
-public class VotingController : Controller
+public class VoterController : Controller
 {
-    private readonly ApplicationDbContext _context;
     private readonly IVoterRepository _voterRepository;
-    private readonly ILogger<VotingController> _logger;
+    private readonly ILogger<VoterController> _logger;
 
-    public VotingController(IVoterRepository voterRepository, ApplicationDbContext context, ILogger<VotingController> logger)
+    public VoterController(IVoterRepository voterRepository, ILogger<VoterController> logger)
     {
-        _context = context;
         _voterRepository = voterRepository;
         _logger = logger;
     }

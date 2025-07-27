@@ -13,3 +13,8 @@ public class VoterDto
     public required string FullName { get; init; }
     public required string PhoneNumber { get; init; }
 }
+
+public class CandidateDto
+{
+    public required string FullName { get; init; }
+}

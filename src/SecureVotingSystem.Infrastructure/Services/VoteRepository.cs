@@ -4,7 +4,7 @@ using SecureVotingSystem.Infrastructure.Data;
 using SecureVotingSystem.Application.Interfaces;
 namespace SecureVotingSystem.Infrastructure.Services;
 
-public class VoterRepository(ApplicationDbContext context):IVoterRepository
+public class VoterRepository(ApplicationDbContext _context):IVoterRepository
 {
     private IOtpGenerator? _otpGenerator;
     /// <summary>
@@ -13,7 +13,7 @@ public class VoterRepository(ApplicationDbContext context):IVoterRepository
     /// <returns> will return all available voters</returns>
     public async Task<List<Voter>> GetAll()
     {
-        return await context.Voters.ToListAsync();
+        return await _context.Voters.ToListAsync();
     }
     
     /// <summary>
@@ -24,12 +24,12 @@ public class VoterRepository(ApplicationDbContext context):IVoterRepository
     /// <exception cref="Exception"></exception>
     public async Task<Voter> GetByActivationCodeAsync(string activationCode)
     {
-        bool isAvailable = context.Voters.Any(x => x.ActivationCode == activationCode);
+        bool isAvailable = _context.Voters.Any(x => x.ActivationCode == activationCode);
         if (!isAvailable)
         {
             throw new Exception("No activation code found for given activation code");
         }
-        Voter? voter = await context.Voters.SingleOrDefaultAsync(x => x.ActivationCode == activationCode);
+        Voter? voter = await _context.Voters.SingleOrDefaultAsync(x => x.ActivationCode == activationCode);
         if (voter == null){throw new Exception("No activation code found for given activation code");}
         return voter;
     }
@@ -37,7 +37,7 @@ public class VoterRepository(ApplicationDbContext context):IVoterRepository
     public async Task<Voter> Create(Voter voter)
     {
         ArgumentNullException.ThrowIfNull(voter, nameof(voter));
-        var phoneExist = await context.Voters.AnyAsync(x =>
+        var phoneExist = await _context.Voters.AnyAsync(x =>
             x.PhoneNumber == voter.PhoneNumber
         );
         
@@ -50,8 +50,8 @@ public class VoterRepository(ApplicationDbContext context):IVoterRepository
         _otpGenerator = new OtpGenerator();
         voter.ActivationCode = $"REG - {_otpGenerator.GenerateOtpCode()}";
         voter.IsVoted = false;
-        await context.Voters.AddAsync(voter);
-        await context.SaveChangesAsync();
+        await _context.Voters.AddAsync(voter);
+        await _context.SaveChangesAsync();
         return voter;
     }
     
