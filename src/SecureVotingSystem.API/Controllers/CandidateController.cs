@@ -5,6 +5,7 @@ using SecureVotingSystem.Core.Models;
 namespace SecureVotingSystem.API.Controllers;
 
 [Route("api/candidate")]
+[ApiController]
 public class CandidateController : Controller
 {
     private readonly ILogger<CandidateController> _logger;
@@ -24,6 +25,7 @@ public class CandidateController : Controller
         return Ok(result);
     }
 
+    [HttpPost("create")]
     public async Task<IActionResult> CreateCandidate(Candidate candidate)
     {
         _logger.LogInformation("Creating candidate ...");
