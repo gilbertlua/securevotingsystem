@@ -2,10 +2,10 @@
 
 public class Vote
 {
-    public int Id { get; set; }
-    public int VoterId { get; set; } 
-    public int CandidateId { get; set; }
-    public DateTime VoteTimestamp { get; set; } = DateTime.UtcNow;
-    public Voter Voter { get; set; } = null!;
-    public Candidate Candidate { get; set; } = null!;
+    public int Id { get; init; }
+    public int VoterId { get; init; } 
+    public int CandidateId { get; init; }
+    public DateTime VoteTimestamp { get; init; } = DateTime.UtcNow;
+    public Voter Voter { get; init; } = null!;
+    public Candidate Candidate { get; init; } = null!;
 }

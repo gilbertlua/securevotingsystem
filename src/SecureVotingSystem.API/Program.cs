@@ -18,6 +18,7 @@ if (getEntry == null)
 //add scope
 builder.Services.AddScoped<IVoterRepository, VoterRepository>();
 builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
+builder.Services.AddScoped<IElectionManager, ElectionManager>();
 //Entity framework
 builder.Services.AddDbContext<ApplicationDbContext>(
     options =>
