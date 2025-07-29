@@ -30,7 +30,38 @@ public class ElectionController : Controller
         _logger.LogInformation("activationCode: {activationCode}, candidateId: {candidateId}",
             activationCode,
             candidateId);
-        var result = await _electionManager.ExecutionSelector(activationCode, candidateId);
-        return Ok(result);
+        try
+        {
+            await _electionManager.ExecutionSelector(activationCode, candidateId);
+            return Ok("Record added successfully");
+        }
+        catch (InvalidOperationException  ex)
+        {
+            _logger.LogError("Vote Operation Valid{ex.Message}",ex.Message);
+            return BadRequest(ex.Message);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Vote Operation Invalid{e.Message}", e.Message);
+            return StatusCode(500,"An error occured");
+        }
+        
+    }
+
+    [HttpGet("get-candidate-election")]
+    public async Task<IActionResult> GetElectionCandidate(int candidateId)
+    {
+        _logger.LogInformation("Getting Election Candidate");
+        try
+        {
+            _logger.LogInformation("Begin election candidate");
+            var result = await _electionManager.GetByCandidateId(candidateId);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Vote Operation Invalid{e.Message}", e.Message);
+            throw;
+        }
     }
 }

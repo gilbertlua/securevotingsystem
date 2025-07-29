@@ -5,7 +5,7 @@ using SecureVotingSystem.Infrastructure.Data;
 
 namespace SecureVotingSystem.Infrastructure.Services;
 
-public class ElectionManager(ApplicationDbContext context):IElectionManager
+public class ElectionManager(ApplicationDbContext context) : IElectionManager
 {
     /// <summary>
     /// Get all record
@@ -15,46 +15,68 @@ public class ElectionManager(ApplicationDbContext context):IElectionManager
     {
         return await context.Votes.ToListAsync();
     }
-    
+
     /// <summary>
     /// Add new record for execution election
     /// </summary>
-    /// <param name="activationCode"> the activation code</param>
-    /// <param name="candidateId"> the candidate id</param>
-    /// <returns></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <param name="activationCode"> The voter's activation code</param>
+    /// <param name="candidateId"> The ID of the candidate</param>
+    /// <returns>The newly recorded Vote entity</returns>
+    /// <exception cref="ArgumentException">Thrown if activation code or candidate ID is invalid/not found.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the voter has already cast a vote.</exception>
     public async Task<Vote> ExecutionSelector(string activationCode, long candidateId)
     {
         ArgumentNullException.ThrowIfNull(activationCode, nameof(activationCode));
-        var voter = context.Voters.SingleOrDefault(x => x.ActivationCode == activationCode);
+        if (candidateId <= 0) // Basic validation for candidateId
+        {
+            throw new ArgumentException("Candidate ID must be a positive value.", nameof(candidateId));
+        }
+        
+        var voter = await context.Voters.SingleOrDefaultAsync(x => x.ActivationCode == activationCode);
         if (voter == null)
         {
-            throw new ArgumentException($"The activation code {activationCode} was not found.");
+            throw new ArgumentException($"The activation code '{activationCode}' was not found.");
         }
-        var isVoted = voter!.IsVoted;
-        if (isVoted)
-        {       
-            throw new InvalidOperationException($"Voter {voter.PhoneNumber} is already voted");
-        }
-        ArgumentNullException.ThrowIfNull(candidateId, nameof(candidateId));
-        var candidate = context.Candidates.SingleOrDefault(x => x.Id == candidateId);
-        var vote = await RecordNewVote(voter.Id, candidate!.Id);
-        await context.AddAsync(voter);
-        voter.IsVoted = true;
-        await context.SaveChangesAsync();
-        return vote;
-    }
 
-    private async Task<Vote> RecordNewVote(int voterId, int candidateId)
-    {
-        var recordVotes = new Vote
+        bool hasVotedInDb = await context.Votes.AnyAsync(v => v.VoterId == voter.Id);
+        if (hasVotedInDb)
         {
-            VoterId = voterId,
-            CandidateId = candidateId,
+            throw new InvalidOperationException(
+                $"Voter with activation code '{activationCode}' has already cast a vote.");
+        }
+
+        var candidate = await context.Candidates.SingleOrDefaultAsync(x => x.Id == candidateId);
+        if (candidate == null)
+        {
+            throw new ArgumentException($"Candidate with ID {candidateId} not found.");
+        }
+
+        var newVote = new Vote
+        {
+            VoterId = voter.Id,
+            CandidateId = candidate.Id,
             VoteTimestamp = DateTime.UtcNow
         };
-        await context.Votes.AddAsync(recordVotes);
+        await context.Votes.AddAsync(newVote);
+        voter.IsVoted = true;
         await context.SaveChangesAsync();
-        return recordVotes;
+
+        return newVote;
+    }
+    
+    /// <summary>
+    /// Get candidate result
+    /// </summary>
+    /// <param name="candidateId"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidDataException"></exception>
+    public async Task<List<Vote>> GetByCandidateId(int candidateId)
+    {
+        var isCandidateExist = await context.Candidates.SingleOrDefaultAsync(c => c.Id == candidateId) != null;
+        if (!isCandidateExist)
+        {
+            throw new InvalidDataException("The candidate with ID " + candidateId + " was not found.");
+        }
+        return await context.Votes.Where(v => v.CandidateId == candidateId).ToListAsync();
     }
 }
