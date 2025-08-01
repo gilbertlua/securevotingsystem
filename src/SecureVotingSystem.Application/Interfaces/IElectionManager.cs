@@ -1,4 +1,5 @@
 ﻿using SecureVotingSystem.Core.Models;
+using SecureVotingSystem.Application.DTOs;
 namespace SecureVotingSystem.Application.Interfaces;
 
 public interface IElectionManager

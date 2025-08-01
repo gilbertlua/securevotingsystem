@@ -72,11 +72,15 @@ public class ElectionManager(ApplicationDbContext context) : IElectionManager
     /// <exception cref="InvalidDataException"></exception>
     public async Task<List<Vote>> GetByCandidateId(int candidateId)
     {
-        var isCandidateExist = await context.Candidates.SingleOrDefaultAsync(c => c.Id == candidateId) != null;
+        var isCandidateExist = await context.Candidates
+            .AnyAsync(c => c.Id == candidateId);
+
         if (!isCandidateExist)
         {
             throw new InvalidDataException("The candidate with ID " + candidateId + " was not found.");
         }
-        return await context.Votes.Where(v => v.CandidateId == candidateId).ToListAsync();
+        
+        var votes = await context.Votes.Where(v => v.CandidateId == candidateId).ToListAsync();
+        return votes;
     }
 }

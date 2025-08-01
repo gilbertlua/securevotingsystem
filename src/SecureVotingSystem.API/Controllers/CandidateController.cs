@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SecureVotingSystem.Application.Interfaces;
-using SecureVotingSystem.Core.Models;
+using SecureVotingSystem.Application.DTOs;
 
 namespace SecureVotingSystem.API.Controllers;
 
@@ -26,10 +26,10 @@ public class CandidateController : Controller
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreateCandidate(Candidate candidate)
+    public async Task<IActionResult> CreateCandidate(CandidateDto candidateDto)
     {
         _logger.LogInformation("Creating candidate ...");
-        var result = await _candidateRepository.Create(candidate);
+        var result = await _candidateRepository.Create(candidateDto);
         return Ok(result);
     }
     

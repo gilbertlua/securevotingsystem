@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SecureVotingSystem.Application.Interfaces;
+using SecureVotingSystem.Application.DTOs;
 using SecureVotingSystem.Core.Models;
 using SecureVotingSystem.Infrastructure.Data;
 
@@ -34,12 +35,17 @@ public class CandidateRepository(ApplicationDbContext _context):ICandidateReposi
     /// <summary>
     /// Create new candidate
     /// </summary>
-    /// <param name="candidate"></param>
+    /// <param name="candidateDto"></param>
     /// <returns></returns>
-    public async Task<Candidate> Create(Candidate candidate)
+    public async Task<Candidate> Create(CandidateDto candidateDto)
     {
-        ArgumentNullException.ThrowIfNull(candidate, nameof(candidate));
+        ArgumentNullException.ThrowIfNull(candidateDto, nameof(candidateDto));
+        var candidate = new Candidate
+        {
+            Name = candidateDto.FullName
+        };
         await _context.Candidates.AddAsync(candidate);
+        await _context.SaveChangesAsync();
         return candidate;
     }
 }

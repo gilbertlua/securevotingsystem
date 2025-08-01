@@ -4,8 +4,8 @@
 public class VoteDto
 {
     public int Id { get; set; }
-    public required string ActivationCode { get; set; }
-    public required string FullName { get; set; }
+    public int CandidateId { get; set; }
+    public required string VoterName { get; set; }
 }
 
 public class VoterDto
