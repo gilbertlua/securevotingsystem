@@ -1,0 +1,62 @@
+﻿/*
+    Custom CSS for the Secure Voting System Dashboard.
+    This file is intended to be simple and contains only a few
+    custom styles not easily achievable with Tailwind CSS utility classes.
+*/
+
+/*
+    A class to style the active link in the sidebar.
+    This will be toggled by the JavaScript.
+*/
+.nav-link.active {
+    background-color: #ebf5ff; /* A light blue background */
+    color: #2563eb; /* A darker blue text color */
+    font-weight: 600;
+}
+
+/*
+    A style for tables to ensure they look good.
+*/
+.data-table {
+    @apply w-full text-left bg-white rounded-2xl shadow-sm overflow-hidden;
+}
+
+.data-table th, .data-table td {
+    @apply py-4 px-6 border-b border-gray-200;
+}
+
+.data-table th {
+    @apply bg-gray-50 text-gray-600 font-semibold uppercase text-sm tracking-wider;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/*
+    A utility class to hide elements.
+*/
+.hidden {
+    display: none;
+}
+
+/*
+    Basic input field styling for consistency.
+*/
+input[type="text"], input[type="number"], select {
+    @apply w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200;
+}
+
+/*
+    Primary button styling.
+*/
+.btn-primary {
+    @apply bg-blue-600 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 transition-colors duration-200;
+}
+
+/*
+    Secondary button styling.
+*/
+.btn-secondary {
+    @apply bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-300 transition-colors duration-200;
+}
